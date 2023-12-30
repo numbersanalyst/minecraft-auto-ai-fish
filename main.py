@@ -6,7 +6,7 @@ from time import sleep
 import pyautogui
 import keyboard
 
-script_active = False
+from colorama import Fore, Style, just_fix_windows_console, init
 
 def getData(capture_size: int) -> np.ndarray:
     """Takes a screenshot of the game and returns it as a numpy array."""
@@ -20,7 +20,7 @@ def toggleScript() -> None:
     """Toggles the script loop."""
     global script_active
     script_active = not script_active
-    print('Script loop is now', 'active.' if script_active else 'inactive.')
+    print(Style.DIM + 'Script loop is now', Fore.GREEN + 'active.' if script_active else Fore.RED + 'inactive.')
 
 
 
@@ -47,9 +47,15 @@ def autoFish(capture_size: int, threshold: int, interval: float) -> None:
 
 
 def main():
-    print('Minecraft Auto Fishing Script for Mausaa')
-    print('Press ctrl to toggle the script.')
-    print('Press q to quit program.')
+    just_fix_windows_console()
+    init(autoreset=True)
+
+    global script_active
+    script_active = False
+
+    print(Style.BRIGHT +'Minecraft Auto Fishing Script for Mausaa')
+    print(Style.DIM + 'Press ctrl to toggle the script.')
+    print(Style.DIM + 'Press q to quit program.')
     print()
 
     keyboard.add_hotkey('ctrl', toggleScript)
