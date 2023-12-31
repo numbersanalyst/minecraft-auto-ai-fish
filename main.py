@@ -17,6 +17,7 @@ detection = False
 reaction = False
 detected_time = time()
 template = cv.imread("bobber_full.png")
+w, h = template.shape[::-1]
 
 
 def setup_colorama():
@@ -79,8 +80,8 @@ def detect_fish(img):
     for pt in zip(*loc[::-1]):
         cv.rectangle(
             img,
-            pt,
-            (pt[0] + template.shape[1], pt[1] + template.shape[0]),
+            pt, # Top left
+            (pt[0] + w, pt[1] + h), # Bottom right
             (0, 255, 0),
             1,
         )
