@@ -17,7 +17,7 @@ detection = False
 reaction = False
 detected_time = time()
 template = cv.imread("bobber_full.png")
-w, h = template.shape[::-1]
+w, h = template.shape[0], template.shape[1]
 
 
 def setup_colorama():
@@ -25,13 +25,23 @@ def setup_colorama():
     init(autoreset=True)
 
 
-def toggle_script():
+def toggle_detection():
     global detection
     detection = not detection
     # Message to user
     print(
-        Style.DIM + "Script loop is now",
+        Style.DIM + "Detection loop is now",
         Fore.GREEN + "active." if detection else Fore.RED + "inactive.",
+    )
+
+
+def toggle_reaction():
+    global reaction
+    reaction = not reaction
+    # Message to user
+    print(
+        Style.DIM + "Reaction loop is now",
+        Fore.GREEN + "active." if reaction else Fore.RED + "inactive.",
     )
 
 
@@ -106,12 +116,14 @@ def main_loop():
 if __name__ == "__main__":
     setup_colorama()
 
-    keyboard.add_hotkey("p", toggle_script)  # Press p to toggle the script
-    keyboard.add_hotkey("o", lambda: os._exit(0))  # Press o to quit
+    keyboard.add_hotkey("i", toggle_detection)  # Press i to toggle the script
+    keyboard.add_hotkey("o", toggle_reaction)  # Press o to toggle the reaction
+    keyboard.add_hotkey("p", lambda: os._exit(0))  # Press p to quit
 
     print(Style.BRIGHT + "Minecraft Auto Fishing AI Script for Mausaa")
-    print(Style.DIM + "Press p to toggle the script.")
-    print(Style.DIM + "Press o to quit program.")
+    print(Style.DIM + "Press i to toggle the detect.")
+    print(Style.DIM + "Press o to toggle the reaction.")
+    print(Style.DIM + "Press p to quit program.")
     print()
 
     main_loop()
