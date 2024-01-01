@@ -90,8 +90,8 @@ def detect_fish(img):
     for pt in zip(*loc[::-1]):
         cv.rectangle(
             img,
-            pt, # Top left
-            (pt[0] + w, pt[1] + h), # Bottom right
+            pt,  # Top left
+            (pt[0] + w, pt[1] + h),  # Bottom right
             (0, 255, 0),
             1,
         )
