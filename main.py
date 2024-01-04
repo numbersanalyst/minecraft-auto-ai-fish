@@ -17,7 +17,7 @@ detection = False
 reaction = False
 detected_time = time()
 template = cv.imread("bobber_full.png")
-w, h = template.shape[0], template.shape[1]
+w, h = template.shape[1], template.shape[0]
 
 
 def setup_colorama():
@@ -48,9 +48,9 @@ def toggle_reaction():
 def take_fish():
     print("Taking fish!")  # Message to user
     pdi.rightClick()
-    pdi.moveRel(None, 380, 0.25, relative=True, disable_mouse_acceleration=True)
+    pdi.moveRel(None, 380, 0.2, relative=True, disable_mouse_acceleration=True)
     sleep(0.2)
-    pdi.moveRel(None, -380, 0.25, relative=True, disable_mouse_acceleration=True)
+    pdi.moveRel(None, -380, 0.2, relative=True, disable_mouse_acceleration=True)
     sleep(1)
     pdi.rightClick()
     sleep(3)
@@ -76,25 +76,24 @@ def process_image():
 
 def detect_fish(img):
     res = cv.matchTemplate(img, template, cv.TM_CCOEFF_NORMED)
-    loc = np.where(res >= THRESHOLD)
+    _, max_val, _, max_loc = cv.minMaxLoc(res)
 
-    # Reaction
-    if reaction:
+    # Consider a match only if it exceeds the threshold
+    if max_val >= THRESHOLD:
         global detected_time
-        if np.sum(loc) != 0:
-            detected_time = time()
-        elif time() - detected_time > REACTION_TIME_THRESHOLD:
-            take_fish()
+        detected_time = time()
 
-    # Draw rectangles
-    for pt in zip(*loc[::-1]):
-        cv.rectangle(
-            img,
-            pt,  # Top left
-            (pt[0] + w, pt[1] + h),  # Bottom right
-            (0, 255, 0),
-            1,
+        top_left = max_loc
+        bottom_right = (
+            top_left[0] + w,
+            top_left[1] + h,
         )
+
+        # Draw rectangle around the detected fish
+        cv.rectangle(img, top_left, bottom_right, (0, 255, 0), 1)
+
+    elif time() - detected_time > REACTION_TIME_THRESHOLD and reaction:
+        take_fish()
 
     return img
 
