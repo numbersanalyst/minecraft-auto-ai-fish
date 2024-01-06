@@ -16,7 +16,7 @@ REACTION_TIME_THRESHOLD = 0.35
 detection = False
 reaction = False
 detected_time = time()
-template = cv.imread("bobber_full.png")
+template = cv.imread("assets/bobber.png")
 w, h = template.shape[1], template.shape[0]
 
 
