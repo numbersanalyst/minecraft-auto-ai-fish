@@ -7,116 +7,170 @@ detection = 0
 reaction = 0
 verification = 1
 
-def create_gui(root):
-    root.title("Auto Fishing AI")
-    root.geometry("350x430")
-    root.resizable(False, False)
-    root.grid_columnconfigure((0, 1), weight=1)
 
-    sv_ttk.set_theme("dark")
+class App(tk.Tk):
+    """GUI class for the bot."""
 
-    status_frame = ttk.LabelFrame(root, text="Buttons, but use keyboard instead.")
-    status_frame.grid(
-        row=0, column=0, padx=10, pady=(10, 0), ipady=3, columnspan=2, sticky="nsew"
-    )
+    def __init__(self, settings):
+        """Create the app."""
+        super().__init__()
+        self.settings = settings
 
-    status_frame.grid_columnconfigure((0, 1), weight=1)
+        self._base_set_up()
+        self._get_values()
+        self._create_gui()
 
-    detection_btn = ttk.Button(
-        status_frame,
-        text="Detection (i): " + ("Active" if detection else "Inactive"),
-    )
+    def _base_set_up(self):
+        """Set up the base settings for the GUI."""
+        sv_ttk.set_theme("dark")
+        self.title("Auto Fishing AI")
+        self.geometry("350x430")
+        self.resizable(False, False)
 
-    reaction_btn = ttk.Button(
-        status_frame,
-        text="Reaction (o): " + ("Active" if reaction else "Inactive"),
-    )
+        self.grid_columnconfigure((0, 1), weight=1)
 
-    style = ttk.Style()
-    style.configure('active.TButton', 
-                foreground = 'lightblue')
+        self.style = ttk.Style()
+        self.style.configure("active.TButton", foreground="lightblue")
 
-    verification_btn = ttk.Button(
-        status_frame,
-        text="Verification (p): "
-        + ("Active" if verification else "Inactive"),
-        style=("active.TButton" if verification else "active.TButton"),
-    )
+    def _get_values(self):
+        """Get the values from the settings."""
+        self.tk_capture_size = tk.StringVar(
+            self, value=self.settings.data["capture_size"]
+        )
+        self.tk_detection_threshold = tk.StringVar(
+            self, value=self.settings.data["detection_threshold"]
+        )
+        self.tk_detection_interval = tk.StringVar(
+            self, value=self.settings.data["detection_interval"]
+        )
+        self.tk_reaction_time = tk.StringVar(
+            self, value=self.settings.data["reaction_time"]
+        )
+        self.tk_reaction_speed = tk.StringVar(
+            self, value=self.settings.data["reaction_speed"]
+        )
+        self.tk_reaction_strenght = tk.StringVar(
+            self, value=self.settings.data["reaction_strength"]
+        )
 
-    detection_btn.grid(row=0, column=0, columnspan=2, padx=4, pady=(0, 5), sticky="ew")
-    reaction_btn.grid(row=1, column=0)
-    verification_btn.grid(row=1, column=1)
+    def update_values(self):
+        """Update the values in the settings."""
+        self.settings.data["capture_size"] = self.tk_capture_size.get()
+        self.settings.data["detection_threshold"] = self.tk_detection_threshold.get()
+        self.settings.data["detection_interval"] = self.tk_detection_interval.get()
+        self.settings.data["reaction_time"] = self.tk_reaction_time.get()
+        self.settings.data["reaction_speed"] = self.tk_reaction_speed.get()
+        self.settings.data["reaction_strength"] = self.tk_reaction_strenght.get()
+        self.settings.save()
 
-    settings_frame = ttk.Frame(root)
-    settings_frame.grid(
-        row=1, column=0, padx=10, pady=(10, 10), columnspan=2, sticky="nsew", ipady=30
-    )
+    def _create_gui(self):
+        """Create the GUI."""
+        status_frame = ttk.LabelFrame(self, text="Buttons, but use keyboard instead.")
+        status_frame.grid(
+            row=0, column=0, padx=10, pady=(10, 0), ipady=3, columnspan=2, sticky="nsew"
+        )
 
-    settings_frame.grid_columnconfigure((0, 1), weight=1)
-    settings_frame.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6), weight=1)
+        status_frame.grid_columnconfigure((0, 1), weight=1)
 
-    # Labels for settings
-    capture_label = ttk.Label(settings_frame, text="Capture Size:")
-    threshold_label = ttk.Label(settings_frame, text="Detection threshold:")
-    interval_label = ttk.Label(settings_frame, text="Detection interval:")
-    reaction_threshold_label = ttk.Label(settings_frame, text="Reaction threshold:")
-    reaction_speed_label = ttk.Label(settings_frame, text="Reaction speed:")
-    reaction_strength_label = ttk.Label(settings_frame, text="Reaction strength:")
+        detection_btn = ttk.Button(
+            status_frame,
+            text="Detection (i): " + ("Active" if detection else "Inactive"),
+            style=("active.TButton" if detection else ""),
+        )
 
-    # Input fields for settings
-    capture_input = ttk.Entry(
-        settings_frame, justify="center", textvariable=CAPTURE_SIZE
-    )
-    threshold_input = ttk.Entry(
-        settings_frame, justify="center", textvariable=THRESHOLD
-    )
-    interval_input = ttk.Entry(settings_frame, justify="center", textvariable=INTERVAL)
-    reaction_threshold_input = ttk.Entry(
-        settings_frame, justify="center", textvariable=REACTION_TIME_THRESHOLD
-    )
-    reaction_speed_input = ttk.Entry(
-        settings_frame, justify="center", textvariable=REACTION_SPEED
-    )
-    reaction_strength_input = ttk.Entry(
-        settings_frame, justify="center", textvariable=REACTION_STRENGTH
-    )
+        reaction_btn = ttk.Button(
+            status_frame,
+            text="Reaction (o): " + ("Active" if reaction else "Inactive"),
+            style=("active.TButton" if reaction else ""),
+        )
 
-    # Layout with grid
-    capture_label.grid(row=0, column=0)
-    threshold_label.grid(row=1, column=0)
-    interval_label.grid(row=2, column=0)
-    reaction_threshold_label.grid(row=4, column=0)
-    reaction_speed_label.grid(row=5, column=0)
-    reaction_strength_label.grid(row=6, column=0)
+        verification_btn = ttk.Button(
+            status_frame,
+            text="Verification (p): " + ("Active" if verification else "Inactive"),
+            style=("active.TButton" if verification else ""),
+        )
 
-    separator = ttk.Separator(settings_frame, orient="horizontal")
-    separator.grid(row=3, column=0, columnspan=2, sticky="ew", pady=5)
+        detection_btn.grid(
+            row=0, column=0, columnspan=2, padx=4, pady=(0, 5), sticky="ew"
+        )
+        reaction_btn.grid(row=1, column=0)
+        verification_btn.grid(row=1, column=1)
 
-    capture_input.grid(row=0, column=1)
-    threshold_input.grid(row=1, column=1)
-    interval_input.grid(row=2, column=1)
-    reaction_threshold_input.grid(row=4, column=1)
-    reaction_speed_input.grid(row=5, column=1)
-    reaction_strength_input.grid(row=6, column=1)
+        settings_frame = ttk.Frame(self)
+        settings_frame.grid(
+            row=1,
+            column=0,
+            padx=10,
+            pady=(10, 10),
+            columnspan=2,
+            sticky="nsew",
+            ipady=30,
+        )
 
-    def update_settings():
-        pass
+        settings_frame.grid_columnconfigure((0, 1), weight=1)
+        settings_frame.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6), weight=1)
 
-    # Button to apply settings changes
-    apply_button = ttk.Button(root, text="Apply Settings", command=update_settings)
-    apply_button.grid(row=2, column=0, columnspan=2, padx=10, pady=(0, 10), sticky="ew")
+        # Labels for settings
+        capture_label = ttk.Label(settings_frame, text="Capture Size:")
+        threshold_label = ttk.Label(settings_frame, text="Detection threshold:")
+        interval_label = ttk.Label(settings_frame, text="Detection interval:")
+        reaction_threshold_label = ttk.Label(settings_frame, text="Reaction time:")
+        reaction_speed_label = ttk.Label(settings_frame, text="Reaction speed:")
+        reaction_strength_label = ttk.Label(settings_frame, text="Reaction strength:")
+
+        # Input fields for settings
+        capture_input = ttk.Entry(
+            settings_frame, justify="center", textvariable=self.tk_capture_size
+        )
+        threshold_input = ttk.Entry(
+            settings_frame, justify="center", textvariable=self.tk_detection_threshold
+        )
+        interval_input = ttk.Entry(
+            settings_frame, justify="center", textvariable=self.tk_detection_interval
+        )
+        reaction_threshold_input = ttk.Entry(
+            settings_frame, justify="center", textvariable=self.tk_reaction_time
+        )
+        reaction_speed_input = ttk.Entry(
+            settings_frame, justify="center", textvariable=self.tk_reaction_speed
+        )
+        reaction_strength_input = ttk.Entry(
+            settings_frame, justify="center", textvariable=self.tk_reaction_strenght
+        )
+
+        # Layout with grid
+        capture_label.grid(row=0, column=0)
+        threshold_label.grid(row=1, column=0)
+        interval_label.grid(row=2, column=0)
+        reaction_threshold_label.grid(row=4, column=0)
+        reaction_speed_label.grid(row=5, column=0)
+        reaction_strength_label.grid(row=6, column=0)
+
+        separator = ttk.Separator(settings_frame, orient="horizontal")
+        separator.grid(row=3, column=0, columnspan=2, sticky="ew", pady=5)
+
+        capture_input.grid(row=0, column=1)
+        threshold_input.grid(row=1, column=1)
+        interval_input.grid(row=2, column=1)
+        reaction_threshold_input.grid(row=4, column=1)
+        reaction_speed_input.grid(row=5, column=1)
+        reaction_strength_input.grid(row=6, column=1)
+
+        # Button to apply settings changes
+        apply_button = ttk.Button(
+            self, text="Apply Settings", command=self.update_values
+        )
+        apply_button.grid(
+            row=2, column=0, columnspan=2, padx=10, pady=(0, 10), sticky="ew"
+        )
 
 
 if __name__ == "__main__":
-    root = tk.Tk()
+    # Create settings
+    from config import Settings
 
-    # Example data
-    CAPTURE_SIZE = tk.StringVar(root, value="150, 150, 150, 150")
-    THRESHOLD = tk.DoubleVar(root, value="0.6")
-    INTERVAL = tk.DoubleVar(root, value="0.25")
-    REACTION_TIME_THRESHOLD = tk.DoubleVar(root, value="0.35")
-    REACTION_SPEED = tk.DoubleVar(root, value="0.5")
-    REACTION_STRENGTH = tk.DoubleVar(root, value="0.5")
+    settings = Settings()
 
-    create_gui(root)
-    root.mainloop()
+    # Create the app
+    app = App(settings)
+    app.mainloop()
