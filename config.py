@@ -20,12 +20,12 @@ class Settings:
     def create_default_config(self):
         """Create a new config file with default settings."""
         self.config["DEFAULT"] = {
-            "capture_size": "150, 150, 150, 150",
-            "detection_threshold": "0.6",
-            "detection_interval": "0.25",
-            "reaction_time": "0.35",
-            "reaction_speed": "0.5",
-            "reaction_strength": "0.5",
+            "capture_size": (150, 150, 150, 150),
+            "detection_threshold": 0.6,
+            "detection_interval": 0.25,
+            "reaction_time": 0.35,
+            "reaction_speed": 0.5,
+            "reaction_strength": 0.5,
         }
         self.save()
 
