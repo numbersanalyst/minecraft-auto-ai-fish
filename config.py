@@ -8,8 +8,13 @@ class Settings:
     def __init__(self):
         """Initialize the settings."""
         self.config = ConfigParser()
-        self.data = self.config["DEFAULT"] # alias
+        self.data = self.config["DEFAULT"]  # alias
+
         self.load()
+
+        self.capture_size = tuple(
+            map(int, self.data["capture_size"].split(", "))
+        )  # convert string to tuple
 
     def load(self):
         """Load the settings from the config file or create a new one."""
@@ -20,7 +25,7 @@ class Settings:
     def create_default_config(self):
         """Create a new config file with default settings."""
         self.config["DEFAULT"] = {
-            "capture_size": (150, 150, 150, 150),
+            "capture_size": "150, 150, 150, 150",
             "detection_threshold": 0.6,
             "detection_interval": 0.25,
             "reaction_time": 0.35,
