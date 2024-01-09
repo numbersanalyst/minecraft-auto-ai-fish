@@ -2,23 +2,24 @@ import tkinter as tk
 from tkinter import ttk
 import sv_ttk
 
-# Example data
-detection = 0
-reaction = 0
-verification = 1
-
 
 class App(tk.Tk):
     """GUI class for the bot."""
 
-    def __init__(self, settings):
+    def __init__(self, settings, bot):
         """Create the app."""
         super().__init__()
         self.settings = settings
+        self.get_status(bot)
 
         self._base_set_up()
         self._get_values()
         self._create_gui()
+
+    def get_status(self, bot):
+        self.detection = bot.detection
+        self.reaction = bot.reaction
+        self.verification = bot.verification
 
     def _base_set_up(self):
         """Set up the base settings for the GUI."""
@@ -63,8 +64,26 @@ class App(tk.Tk):
         self.settings.data["reaction_strength"] = self.tk_reaction_strenght.get()
         self.settings.save()
 
+    def update_btn_text(self):
+        """Update the text and style in the buttons."""
+        self.detection_btn["text"] = "Detection (i): " + (
+            "Active" if self.detection else "Inactive"
+        )
+        self.reaction_btn["text"] = "Reaction (o): " + (
+            "Active" if self.reaction else "Inactive"
+        )
+        self.verification_btn["text"] = "Verification (p): " + (
+            "Active" if self.verification else "Inactive"
+        )
+
+        self.detection_btn["style"] = "active.TButton" if self.detection else ""
+        self.reaction_btn["style"] = "active.TButton" if self.reaction else ""
+        self.verification_btn["style"] = "active.TButton" if self.verification else ""
+
     def _create_gui(self):
         """Create the GUI."""
+
+        # STATUS BUTTONS
         status_frame = ttk.LabelFrame(self, text="Buttons, but use keyboard instead.")
         status_frame.grid(
             row=0, column=0, padx=10, pady=(10, 0), ipady=3, columnspan=2, sticky="nsew"
@@ -72,30 +91,20 @@ class App(tk.Tk):
 
         status_frame.grid_columnconfigure((0, 1), weight=1)
 
-        detection_btn = ttk.Button(
-            status_frame,
-            text="Detection (i): " + ("Active" if detection else "Inactive"),
-            style=("active.TButton" if detection else ""),
-        )
+        # self for change the style while button is pressed
+        self.detection_btn = ttk.Button(status_frame)
+        self.reaction_btn = ttk.Button(status_frame)
+        self.verification_btn = ttk.Button(status_frame)
 
-        reaction_btn = ttk.Button(
-            status_frame,
-            text="Reaction (o): " + ("Active" if reaction else "Inactive"),
-            style=("active.TButton" if reaction else ""),
-        )
+        self.update_btn_text()
 
-        verification_btn = ttk.Button(
-            status_frame,
-            text="Verification (p): " + ("Active" if verification else "Inactive"),
-            style=("active.TButton" if verification else ""),
+        self.detection_btn.grid(
+            row=0, column=0, columnspan=2, padx=6, pady=(0, 5), sticky="ew"
         )
+        self.reaction_btn.grid(row=1, column=0)
+        self.verification_btn.grid(row=1, column=1)
 
-        detection_btn.grid(
-            row=0, column=0, columnspan=2, padx=4, pady=(0, 5), sticky="ew"
-        )
-        reaction_btn.grid(row=1, column=0)
-        verification_btn.grid(row=1, column=1)
-
+        # SETTINGS
         settings_frame = ttk.Frame(self)
         settings_frame.grid(
             row=1,
@@ -111,7 +120,7 @@ class App(tk.Tk):
         settings_frame.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6), weight=1)
 
         # Labels for settings
-        capture_label = ttk.Label(settings_frame, text="Capture Size:")
+        capture_label = ttk.Label(settings_frame, text="Capture size:")
         threshold_label = ttk.Label(settings_frame, text="Detection threshold:")
         interval_label = ttk.Label(settings_frame, text="Detection interval:")
         reaction_threshold_label = ttk.Label(settings_frame, text="Reaction time:")
