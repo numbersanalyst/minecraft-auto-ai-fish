@@ -17,9 +17,11 @@ class App(tk.Tk):
         self._create_gui()
 
     def get_status(self, bot):
+        """Get the status of the bot."""
         self.detection = bot.detection
-        self.reaction = bot.reaction
-        self.verification = bot.verification
+
+        self.reaction_var = tk.BooleanVar(value=bot.reaction)
+        self.verification_var = tk.BooleanVar(value=bot.verification)
 
     def _base_set_up(self):
         """Set up the base settings for the GUI."""
@@ -31,7 +33,7 @@ class App(tk.Tk):
         self.grid_columnconfigure((0, 1), weight=1)
 
         self.style = ttk.Style()
-        self.style.configure("active.TButton", foreground="lightblue")
+        self.style.configure("active.TButton", foreground="red")
 
     def _get_values(self):
         """Get the values from the settings."""
@@ -65,20 +67,11 @@ class App(tk.Tk):
         self.settings.save()
 
     def update_btn_text(self):
-        """Update the text and style in the buttons."""
-        self.detection_btn["text"] = "Detection (i): " + (
-            "Active" if self.detection else "Inactive"
+        """Update the text and style in the button."""
+        self.detection_btn["text"] = (
+            "Start script (i)" if not self.detection else "Stop script (i)"
         )
-        self.reaction_btn["text"] = "Reaction (o): " + (
-            "Active" if self.reaction else "Inactive"
-        )
-        self.verification_btn["text"] = "Verification (p): " + (
-            "Active" if self.verification else "Inactive"
-        )
-
         self.detection_btn["style"] = "active.TButton" if self.detection else ""
-        self.reaction_btn["style"] = "active.TButton" if self.reaction else ""
-        self.verification_btn["style"] = "active.TButton" if self.verification else ""
 
     def _create_gui(self):
         """Create the GUI."""
@@ -92,14 +85,18 @@ class App(tk.Tk):
         status_frame.grid_columnconfigure((0, 1), weight=1)
 
         # self for change the style while button is pressed
-        self.detection_btn = ttk.Button(status_frame)
-        self.reaction_btn = ttk.Button(status_frame)
-        self.verification_btn = ttk.Button(status_frame)
+        self.detection_btn = ttk.Button(status_frame, command=bot.toggle_detection)
+        self.reaction_btn = ttk.Checkbutton(
+            status_frame, text="Reaction (o)", variable=self.reaction_var
+        )
+        self.verification_btn = ttk.Checkbutton(
+            status_frame, text="Verification (v)", variable=self.verification_var
+        )
 
         self.update_btn_text()
 
         self.detection_btn.grid(
-            row=0, column=0, columnspan=2, padx=6, pady=(0, 5), sticky="ew"
+            row=0, column=0, columnspan=2, padx=10, pady=(5, 5), sticky="ew"
         )
         self.reaction_btn.grid(row=1, column=0)
         self.verification_btn.grid(row=1, column=1)
@@ -180,6 +177,10 @@ if __name__ == "__main__":
 
     settings = Settings()
 
+    from bot import Bot
+
+    bot = Bot()
+
     # Create the app
-    app = App(settings)
+    app = App(settings, bot)
     app.mainloop()
