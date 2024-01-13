@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import sv_ttk
+import keyboard
 
 
 class App(tk.Tk):
@@ -9,19 +10,42 @@ class App(tk.Tk):
     def __init__(self, settings, bot):
         """Create the app."""
         super().__init__()
+
         self.settings = settings
-        self.get_status(bot)
+        self.bot = bot
 
         self._base_set_up()
         self._get_values()
         self._create_gui()
 
-    def get_status(self, bot):
-        """Get the status of the bot."""
-        self.detection = bot.detection
+        # Add hotkey for toggling object detection
+        keyboard.add_hotkey("i", self.toggle_detection)
 
-        self.reaction_var = tk.BooleanVar(value=bot.reaction)
-        self.verification_var = tk.BooleanVar(value=bot.verification)
+        # Add hotkey for toggling reaction
+        keyboard.add_hotkey("o", self.toggle_reaction)
+
+        # Add hotkey for toggling verification
+        keyboard.add_hotkey("p", self.toggle_verification)
+
+    def toggle_detection(self):
+        """Toggles bot detection and update button text."""
+        self.bot.toggle_detection()
+        self.update_btn_text()
+
+    def toggle_reaction(self):
+        """Toggle the reaction state of the bot."""
+        self.reaction_var.set(not self.reaction_var.get())
+        self.bot.reaction = self.reaction_var.get()
+
+    def toggle_verification(self):
+        """Toggle the verification state of the bot."""
+        self.verification_var.set(not self.verification_var.get())
+        self.bot.verification = self.verification_var.get()
+
+    def update_bot_status(self):
+        """Updates a bot state values."""
+        self.bot.reaction = self.reaction_var.get()
+        self.bot.verification = self.verification_var.get()
 
     def _base_set_up(self):
         """Set up the base settings for the GUI."""
@@ -68,6 +92,7 @@ class App(tk.Tk):
 
     def update_btn_text(self):
         """Update the text and style in the button."""
+        self.detection = self.bot.detection
         self.detection_btn["text"] = (
             "Start script (i)" if not self.detection else "Stop script (i)"
         )
@@ -84,13 +109,16 @@ class App(tk.Tk):
 
         status_frame.grid_columnconfigure((0, 1), weight=1)
 
+        self.reaction_var = tk.BooleanVar(value=self.bot.reaction)
+        self.verification_var = tk.BooleanVar(value=self.bot.verification)
+
         # self for change the style while button is pressed
-        self.detection_btn = ttk.Button(status_frame, command=bot.toggle_detection)
+        self.detection_btn = ttk.Button(status_frame, command=self.toggle_detection)
         self.reaction_btn = ttk.Checkbutton(
-            status_frame, text="Reaction (o)", variable=self.reaction_var
+            status_frame, text="Reaction (o)", variable=self.reaction_var, command=self.update_bot_status
         )
         self.verification_btn = ttk.Checkbutton(
-            status_frame, text="Verification (v)", variable=self.verification_var
+            status_frame, text="Verification (p)", variable=self.verification_var, command=self.update_bot_status
         )
 
         self.update_btn_text()
@@ -179,8 +207,9 @@ if __name__ == "__main__":
 
     from bot import Bot
 
-    bot = Bot()
+    bot = Bot(settings)
 
     # Create the app
     app = App(settings, bot)
+
     app.mainloop()
