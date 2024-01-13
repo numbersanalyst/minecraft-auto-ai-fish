@@ -12,15 +12,16 @@ class Settings:
 
         self.load()
 
-        self.capture_size = tuple(
-            map(int, self.data["capture_size"].split(", "))
-        )  # convert string to tuple
+    def get_capture_size(self):
+        """Convert data about capture_size from string to tuple."""
+        self.capture_size = tuple(map(int, self.data["capture_size"].split(", ")))
 
     def load(self):
         """Load the settings from the config file or create a new one."""
         if not os.path.exists("config.ini"):
             self.create_default_config()
         self.config.read("config.ini")
+        self.get_capture_size()
 
     def create_default_config(self):
         """Create a new config file with default settings."""
@@ -38,6 +39,7 @@ class Settings:
         """Save the settings to the config file."""
         with open("config.ini", "w") as f:
             self.config.write(f)
+        self.get_capture_size()
 
 
 if __name__ == "__main__":
