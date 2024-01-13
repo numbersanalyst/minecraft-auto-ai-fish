@@ -2,10 +2,12 @@ from multiprocessing import Process
 
 
 class Bot:
-    def __init__(self):
+    def __init__(self, settings):
         self.detection = False
         self.reaction = False
         self.verification = False
+
+        self.settings = settings
 
     def toggle_detection(self):
         self.detection = not self.detection
@@ -16,4 +18,6 @@ class Bot:
             self.detection_process.terminate()
 
     def start_detection(self):
-        pass
+        print(self.reaction, "reaction")
+        print(self.verification, "verification")
+        print(self.settings.capture_size)
