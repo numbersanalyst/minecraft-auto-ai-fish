@@ -7,7 +7,7 @@ from time import time
 from reaction import Reaction
 
 
-class Detect:
+class Detector:
     def __init__(self, settings, bot):
         """Initialize the basic variables."""
         self.settings = settings
