@@ -1,11 +1,14 @@
 from multiprocessing import Process
+from multiprocessing import freeze_support
 from detection import Detector
 from time import sleep
 
 
 class Bot:
     def __init__(self, settings):
-        """Initialize the bot general values."""
+        """Initialize the bot values."""
+        freeze_support()  # To prevent spawning multiple main processes
+
         self.detection = False
         self.reaction = False
         self.verification = False
