@@ -40,7 +40,3 @@ class Settings:
         with open("config.ini", "w") as f:
             self.config.write(f)
         self.get_capture_size()
-
-
-if __name__ == "__main__":
-    settings = Settings()

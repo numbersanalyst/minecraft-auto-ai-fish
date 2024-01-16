@@ -197,19 +197,3 @@ class App(tk.Tk):
         apply_button.grid(
             row=2, column=0, columnspan=2, padx=10, pady=(0, 10), sticky="ew"
         )
-
-
-if __name__ == "__main__":
-    # Create settings
-    from config import Settings
-
-    settings = Settings()
-
-    from bot import Bot
-
-    bot = Bot(settings)
-
-    # Create the app
-    app = App(settings, bot)
-
-    app.mainloop()
