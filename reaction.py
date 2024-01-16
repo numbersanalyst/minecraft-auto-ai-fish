@@ -8,9 +8,6 @@ class Reaction:
         self.reaction_time = settings.data["reaction_time"]
         self.reaction_strength = settings.data["reaction_strength"]
 
-        self.eq_width = 300
-        self.eq_height = 300
-
     def take_fish(self):
         pdi.rightClick()
         pdi.moveRel(
@@ -31,20 +28,26 @@ class Reaction:
             disable_mouse_acceleration=True,
         )
         sleep(1)
-        pdi.rightClick()
 
-    def calculate_skull_position(self, loc):
-        # to do
+    def calculate_skull_position(self, loc, eq_half_w):
         x, y = loc
+
+        mid = eq_half_w - 20
+        x = x - mid
+        y = y + 20
+
         return x, y
 
-    def bypass_verification(self, x, y):
+    def open_inventory(self):
         pdi.press("e")
         sleep(0.2)
+        pdi.moveRel(None, -5, relative=True)
+
+    def bypass_verification(self, x, y):
         pdi.moveRel(
             x,
             y,
             relative=True,
             attempt_pixel_perfect=True,
-            disable_mouse_acceleration=True,
         )
+        pdi.click()
