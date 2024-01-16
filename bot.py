@@ -5,6 +5,8 @@ from time import sleep
 
 
 class Bot:
+    """A class that is controls detection, verification and reaction also."""
+
     def __init__(self, settings):
         """Initialize the bot values."""
         freeze_support()  # To prevent spawning multiple main processes

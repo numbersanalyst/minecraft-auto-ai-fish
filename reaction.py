@@ -3,6 +3,8 @@ from time import sleep
 
 
 class Reaction:
+    """A class that is responsible for controlling the mouse and keyboard."""
+
     def __init__(self, settings):
         """Get values from settings."""
         self.verification_time = settings.data["reaction_speed"]
