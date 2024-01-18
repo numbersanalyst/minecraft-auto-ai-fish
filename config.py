@@ -28,10 +28,10 @@ class Settings:
         self.config["DEFAULT"] = {
             "capture_size": "150, 150, 150, 150",
             "detection_threshold": 0.6,
-            "detection_interval": 0.25,
+            "detection_interval": 0.2,
             "reaction_time": 0.35,
-            "reaction_speed": 0.5,
-            "reaction_strength": 0.5,
+            "reaction_speed": 1,
+            "reaction_strength": 300,
         }
         self.save()
 
