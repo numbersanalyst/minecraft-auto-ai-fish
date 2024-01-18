@@ -34,7 +34,7 @@ class Bot:
     def start_detection(self):
         """Detection process."""
         self.detection_ctrl.create_window()
+        wait_time = float(self.settings.data["detection_interval"])
         while True:
             self.detection_ctrl.detect_bobber()
-            wait_time = float(self.settings.data["detection_interval"])
             sleep(wait_time)
