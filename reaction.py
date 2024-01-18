@@ -7,9 +7,9 @@ class Reaction:
 
     def __init__(self, settings):
         """Get values from settings."""
-        self.verification_time = settings.data["reaction_speed"]
-        self.reaction_time = settings.data["reaction_time"]
-        self.reaction_strength = settings.data["reaction_strength"]
+        self.verification_time = float(settings.data["reaction_speed"])
+        self.reaction_time = float(settings.data["reaction_time"])
+        self.reaction_strength = int(settings.data["reaction_strength"])
 
     def take_fish(self):
         """Controls the mouse to take a fish."""
@@ -31,7 +31,7 @@ class Reaction:
             attempt_pixel_perfect=True,
             disable_mouse_acceleration=True,
         )
-        sleep(1)
+        sleep(2)
 
     def calculate_skull_position(self, loc, eq_half_w):
         """Calculate the position of the skull in the inventory."""
@@ -56,5 +56,6 @@ class Reaction:
             y,
             relative=True,
             attempt_pixel_perfect=True,
+            disable_mouse_acceleration=True,
         )
         pdi.click()
