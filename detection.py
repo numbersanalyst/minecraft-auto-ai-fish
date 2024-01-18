@@ -22,7 +22,7 @@ class Detector:
         self.verification_hsv_second = np.array([180, 255, 255])
 
         self.bobber_template = cv.imread("assets/bobber.png")
-        self.skull_template = cv.imread("skull_human.png")
+        self.skull_template = cv.imread("assets/skull_human.png")
         self.skull_template = self.proccess_image_with_hsv(
             self.skull_template, self.eq_hsv
         )
@@ -107,14 +107,12 @@ class Detector:
         self.update_window(res)
         if top_left != None:
             self.detected_time = time()
-        elif (
-            time() - self.detected_time > float(self.settings.data["reaction_time"])
-            and self.bot.reaction
-        ):
-            self.reaction.take_fish()
+        elif time() - self.detected_time > float(self.settings.data["reaction_time"]):
+            if self.bot.reaction:
+                self.reaction.take_fish()
+                pdi.rightClick()
             if self.bot.verification:
                 self.detect_verification()
-            pdi.rightClick()
 
     def detect_verification(self):
         """Detects a verification and returns the image with a rectangle around it. Invokes reaction if necessary."""
