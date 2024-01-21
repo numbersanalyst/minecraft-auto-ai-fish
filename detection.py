@@ -148,6 +148,7 @@ class Detector:
     def update_window(self, img):
         """Updates the window with the given image."""
         cv.imshow("Preview", img)
+        cv.setWindowProperty("Preview", cv.WND_PROP_TOPMOST, 1)
         cv.waitKey(1)
 
     def destroy_window(self):
