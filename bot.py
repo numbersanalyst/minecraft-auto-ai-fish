@@ -1,7 +1,7 @@
 from multiprocessing import Process
 from multiprocessing import freeze_support
 from detection import Detector
-from time import sleep
+import time
 
 
 class Bot:
@@ -34,7 +34,8 @@ class Bot:
     def start_detection(self):
         """Detection process."""
         self.detection_ctrl.create_window()
+        self.detection_ctrl.start_time = time.time()
         wait_time = float(self.settings.data["detection_interval"])
         while True:
             self.detection_ctrl.detect_bobber()
-            sleep(wait_time)
+            time.sleep(wait_time)

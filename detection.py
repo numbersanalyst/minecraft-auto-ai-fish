@@ -16,10 +16,10 @@ class Detector:
         self.reaction = Reaction(settings)
 
         self.detected_time = time()
+        self.start_time = time()
+        self.min_time = 5.0
 
         self.eq_hsv = np.array([0, 0, 139])
-        self.verification_hsv_main = np.array([110, 130, 150])
-        self.verification_hsv_second = np.array([180, 255, 255])
 
         self.bobber_template = cv.imread("assets/bobber.png")
         self.skull_template = cv.imread("assets/skull_human.png")
@@ -27,12 +27,6 @@ class Detector:
             self.skull_template, self.eq_hsv
         )
         self.skull_template = cv.blur(self.skull_template, (2, 2))
-        self.verification_template = cv.imread("assets/verification.png")
-        self.verification_template = self.proccess_image_with_hsv(
-            self.verification_template,
-            self.verification_hsv_main,
-            self.verification_hsv_second,
-        )
 
         self.verification_half_w = 150
         self.verification_h = 100
@@ -105,30 +99,33 @@ class Detector:
             img, self.bobber_template, float(self.settings.data["detection_threshold"])
         )
         self.update_window(res)
+        print(time() - self.start_time)
         if top_left != None:
             self.detected_time = time()
         elif time() - self.detected_time > float(self.settings.data["reaction_time"]):
             if self.bot.reaction:
+                # Safety check
+                if time() - self.start_time < self.min_time:
+                    if self.bot.verification:
+                        self.detect_verification()
+                    else:
+                        raise Exception(
+                            "Bobber not detected, but verification is disabled - safety quit."
+                        )
+
                 self.reaction.take_fish()
+
+                # Prepare for next detection
                 self.reaction.cast_the_fishing_rod()
-            if self.bot.verification:
-                self.detect_verification()
+                self.start_time = time()
 
     def detect_verification(self):
         """Detects a verification and returns the image with a rectangle around it. Invokes reaction if necessary."""
-        img = self.get_screen(
-            self.verification_half_w, self.verification_h, self.verification_half_w, 0
-        )
-        res, top_left = self.detect(
-            img,
-            self.verification_template,
-            hsv=self.verification_hsv_main,
-            hsv_max=self.verification_hsv_second,
-        )
-        self.update_window(res)
-        if top_left != None:
-            self.reaction.open_inventory()
-            self.detect_skull()
+        self.reaction.open_inventory()
+        self.detect_skull()
+
+        # Prepare for next detection
+        self.cast_the_fishing_rod()
 
     def detect_skull(self):
         """Detects a skull and returns the image with a rectangle around it. Invokes reaction if necessary."""
@@ -140,6 +137,8 @@ class Detector:
         if top_left != None:
             x, y = self.reaction.calculate_skull_position(top_left, self.eq_half_w)
             self.reaction.bypass_verification(x, y)
+        else:
+            raise Exception("Verification problem - safety quit.")
 
     def create_window(self):
         """Creates the preview window."""
