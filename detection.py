@@ -110,7 +110,7 @@ class Detector:
         elif time() - self.detected_time > float(self.settings.data["reaction_time"]):
             if self.bot.reaction:
                 self.reaction.take_fish()
-                pdi.rightClick()
+                self.reaction.cast_the_fishing_rod()
             if self.bot.verification:
                 self.detect_verification()
 

@@ -31,6 +31,11 @@ class Reaction:
             attempt_pixel_perfect=True,
             disable_mouse_acceleration=True,
         )
+        sleep(1)
+
+    def cast_the_fishing_rod(self):
+        """Controls the mouse to cast the fishing rod."""
+        pdi.rightClick()
         sleep(2)
 
     def calculate_skull_position(self, loc, eq_half_w):
