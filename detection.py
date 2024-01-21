@@ -99,7 +99,6 @@ class Detector:
             img, self.bobber_template, float(self.settings.data["detection_threshold"])
         )
         self.update_window(res)
-        print(time() - self.start_time)
         if top_left != None:
             self.detected_time = time()
         elif time() - self.detected_time > float(self.settings.data["reaction_time"]):
