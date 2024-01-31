@@ -7,7 +7,6 @@ class Reaction:
 
     def __init__(self, settings):
         """Get values from settings."""
-        self.verification_time = float(settings.data["reaction_speed"])
         self.reaction_time = float(settings.data["reaction_time"])
         self.reaction_strength = int(settings.data["reaction_strength"])
 
